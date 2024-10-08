@@ -9,45 +9,70 @@
 
 #include <vector>
 
+void Student::set_id(const string &id) {
+    this->id = id;
+}
+
+void Student::set_name(const string &name) {
+    this->name = name;
+}
+
+void Student::print() const {
+    std::cout << "-----学生信息-----" << std::endl
+            << "学号：" << id << std::endl
+            << "姓名：" << name << std::endl;
+}
+
+void Student::save() const {
+    std::ofstream outFile;
+    outFile.open("student-" + id + ".txt");
+    outFile << id << " " << name << std::endl;
+    outFile.close();
+}
+
 void save_student_data() {
     constexpr int N = 10;
-    const Student student[N] = {
-        {"E2021246", "陈宇阳"},
-        {"E2021999", "同学1"},
-        {"E2021998", "同学2"},
-        {"E2021997", "同学3"},
-        {"E2021996", "同学4"},
-        {"E2021995", "同学5"},
-        {"E2021994", "同学6"},
-        {"E2021993", "同学7"},
-        {"E2021992", "同学8"},
-        {"E2021991", "同学9"},
-    };
 
-    std::ofstream outFile;
-    outFile.open("student_data.txt");
+    Student student[N];
 
-    for (const auto & s : student) {
-        // std::cout << s.id << " " << s.name << std::endl;
-        outFile << s.id << " " << s.name << std::endl;
+    student[0].set_id("E2021246");
+    student[0].set_name("陈宇阳");
+    student[0].save();
+
+    for (int i = 1; i < N; i++) {
+        student[i].set_id("E202199" + std::to_string(i));
+        student[i].set_name("同学" + std::to_string(i));
+        student[i].save();
     }
-
-    outFile.close();
 }
 
 std::vector<Student> load_student_data() {
     std::vector<Student> students;
 
-    std::ifstream inFile("student_data.txt");
-    constexpr int N = 10;
-    for (int i = 0; i < N; i++) {
-        string id, name;
-        inFile >> id >> name;
-        Student s = {id, name};
+    std::ifstream inFile("student-E2021246.txt");
 
-        students.push_back(s);
-    }
+    string cyy_id, cyy_name;
+    inFile >> cyy_id >> cyy_name;
+    Student cyy;
+    cyy.set_id(cyy_id);
+    cyy.set_name(cyy_name);
+    students.push_back(cyy);
     inFile.close();
+
+    constexpr int N = 10;
+    for (int i = 1; i < N; i++) {
+        std::ifstream file("student-E202199" + std::to_string(i) + ".txt");
+
+        Student s;
+        students.push_back(s);
+        string id, name;
+
+        file >> id >> name;
+        students[i].set_id(id);
+        students[i].set_name(name);
+
+        file.close();
+    }
 
     return students;
 }

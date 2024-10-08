@@ -10,9 +10,20 @@
 
 using std::string;
 
-struct Student {
+class Student {
     string id;
     string name;
+
+public:
+    void set_id(const string &id);
+
+    void set_name(const string &name);
+
+    void print() const;
+
+    void save() const;
+
+    void load();
 };
 
 void save_student_data();

@@ -4,9 +4,79 @@
 #include "SmartCar.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "LCD.h"
 #include "Student.h"
+
+
+void SmartCar::set_id(const string &id) {
+    this->id = id;
+}
+
+void SmartCar::set_chassis(const Chassis &chassis) {
+    this->chassis = chassis;
+}
+
+void SmartCar::set_agx_kit(const AGXKit &agx_kit) {
+    this->agx_kit = agx_kit;
+}
+
+void SmartCar::set_stereo_camera(const StereoVisionCamera &stereo_camera) {
+    this->stereo_camera = stereo_camera;
+}
+
+void SmartCar::set_multi_line_lidar(const MultiLineLidar &multi_line_lidar) {
+    this->multi_line_lidar = multi_line_lidar;
+}
+
+void SmartCar::set_nine_axis_gyroscope(const NineAxisGyroscope &nine_axis_gyroscope) {
+    this->nine_axis_gyroscope = nine_axis_gyroscope;
+}
+
+void SmartCar::set_lcd(const LCD &lcd) {
+    this->lcd = lcd;
+}
+
+void SmartCar::set_battery_module(const BatteryModule &battery_module) {
+    this->battery_module = battery_module;
+}
+
+void SmartCar::print() const {
+    using namespace std;
+    cout << "-----智能小车基本信息-----" << endl
+            << "编号：" << id << endl;
+
+    chassis.print();
+
+    agx_kit.print();
+
+    stereo_camera.print();
+
+    multi_line_lidar.print();
+
+    nine_axis_gyroscope.print();
+
+    lcd.print();
+
+    battery_module.print();
+}
+
+
+void SmartCar::save() {
+    save_smart_car_data();
+}
+
+void SmartCar::load() {
+    id = "Unknown";
+    chassis.load();
+    agx_kit.load();
+    stereo_camera.load();
+    multi_line_lidar.load();
+    nine_axis_gyroscope.load();
+    lcd.load();
+    battery_module.load();
+}
 
 void save_smart_car_data() {
     string car_ids[10] = {
@@ -30,236 +100,93 @@ void save_smart_car_data() {
     }
     fileIds.close();
 
-    Tyre tyres[4] = {
-        {"公路轮、麦克纳姆轮", "175mm"},
-        {"公路轮、麦克纳姆轮", "175mm"},
-        {"公路轮、麦克纳姆轮", "175mm"},
-        {"公路轮、麦克纳姆轮", "175mm"},
-    };
 
-    std::ofstream fileTyres;
-    fileTyres.open("tyres.txt");
-    for (auto &i: tyres) {
-        fileTyres << i.model << " " << i.size << std::endl;
+    std::vector<Tyre> tyres;
+    for (int i = 0; i < 4; i++) {
+        Tyre tyre;
+        tyre.set_model("公路轮、麦克纳姆轮");
+        tyre.set_size("175mm");
+        tyre.save();
+        tyres.push_back(tyre);
     }
-    fileTyres.close();
-
-    Chassis chassis = {
-        "dp2oZUCZ6q",
-        "SCOUT_MINI",
-        "451mm",
-        "490mm",
-        "115mm",
-        "0m",
-        "四轮四驱",
-        "10KM",
-        tyres[0], tyres[1], tyres[2], tyres[3],
-    };
-
-    std::ofstream fileChassis;
-    fileChassis.open("chassis.txt");
 
 
-    fileChassis << chassis.id << " " << chassis.model
-            << " " << chassis.wheel_base << " " << chassis.wheel_track
-            << " " << chassis.minimum_ground_clearance << " " << chassis.minimum_turning_radius
-            << " " << chassis.driving_form << " " << chassis.maximum_stroke
-            << std::endl;
-    fileChassis.close();
+    Chassis chassis;
+
+    chassis.set_id("dp2oZUCZ6q");
+    chassis.set_model("SCOUT_MINI");
+    chassis.set_wheel_base("451mm");
+    chassis.set_wheel_track("490mm");
+    chassis.set_minimum_ground_clearance("115mm");
+    chassis.set_minimum_turning_radius("0m");
+    chassis.set_driving_form("四轮四驱");
+    chassis.set_maximum_stroke("10KM");
+    chassis.set_tyre(tyres);
+
+    chassis.save();
 
 
-    AGXKit agx_kit = {
-        "AGX-Xavier",
-        "32_TOPS",
-        512,
-        64,
-        "32G",
-        "32G",
-    };
+    AGXKit agx_kit;
 
-    std::ofstream fileAGX;
-    fileAGX.open("agx.txt");
+    agx_kit.set_model("AGX-Xavier");
+    agx_kit.set_ai("32_TOPS");
+    agx_kit.set_cuda_cores(512);
+    agx_kit.set_tensor_core(64);
+    agx_kit.set_storage("32G");
+    agx_kit.set_video_memory("32G");
 
-    fileAGX << agx_kit.model << " " << agx_kit.ai
-            << " " << agx_kit.cuda_cores << " " << agx_kit.tensor_core
-            << " " << agx_kit.video_memory << " " << agx_kit.storage << std::endl;
-    fileAGX.close();
+    agx_kit.save();
 
 
-    StereoVisionCamera stereo_camera = {
-        "RealSense_D435i",
-        "D430",
-        "1920*1080",
-        30,
-        "87*58",
-        90,
-    };
+    StereoVisionCamera stereo_camera;
 
-    std::ofstream fileStereo;
-    fileStereo.open("stereo.txt");
+    stereo_camera.set_model("RealSense_D435i");
+    stereo_camera.set_camera("D430");
+    stereo_camera.set_rgb_frame_resolution("1920*1080");
+    stereo_camera.set_rgb_fps(30);
+    stereo_camera.set_fov("87*58");
+    stereo_camera.set_deep_fps(90);
 
-    fileStereo << stereo_camera.model << " " << stereo_camera.camera
-            << " " << stereo_camera.rgb_frame_resolution << " " << stereo_camera.rgb_fps
-            << " " << stereo_camera.fov << " " << stereo_camera.deep_fps << std::endl;
-    fileStereo.close();
+    stereo_camera.save();
 
 
-    MultiLineLidar multiLineLidar = {
-        "RS-Helios-16p",
-        16,
-        "100m",
-        "8w",
-    };
+    MultiLineLidar multi_line_lidar;
 
-    std::ofstream fileMultiLineLidar;
-    fileMultiLineLidar.open("multiLineLidar.txt");
+    multi_line_lidar.set_model("RS-Helios-16p");
+    multi_line_lidar.set_channel(16);
+    multi_line_lidar.set_test_range("100m");
+    multi_line_lidar.set_power("8w");
 
-    fileMultiLineLidar << multiLineLidar.model << " " << multiLineLidar.channel
-            << " " << multiLineLidar.test_range << " " << multiLineLidar.power << std::endl;
-    fileMultiLineLidar.close();
+    multi_line_lidar.save();
 
-    NineAxisGyroscope nineAxisGyroscope = {
-        "CH110",
-        "NXP",
-    };
 
-    std::ofstream fileNineAxisGyroscope;
-    fileNineAxisGyroscope.open("nineAxisGyroscope.txt");
+    NineAxisGyroscope nine_axis_gyroscope;
 
-    fileNineAxisGyroscope << nineAxisGyroscope.model
-            << " " << nineAxisGyroscope.manufacturers << std::endl;
-    fileNineAxisGyroscope.close();
+    nine_axis_gyroscope.set_model("CH110");
+    nine_axis_gyroscope.set_manufacturers("NXP");
 
-    LCD lcd = {
-        11.6,
-        "super"
-    };
+    nine_axis_gyroscope.save();
 
-    std::ofstream fileLCD;
-    fileLCD.open("lcd.txt");
 
-    fileLCD << lcd.size << " " << lcd.model << std::endl;
-    fileLCD.close();
+    LCD lcd;
 
-    BatteryModule batteryModule = {
-        "24V/15Ah",
-        "24v",
-        "2H",
-    };
+    lcd.set_size(11.6);
+    lcd.set_model("super");
 
-    std::ofstream fileBattery;
+    lcd.save();
 
-    fileBattery.open("battery.txt");
 
-    fileBattery << batteryModule.parameter << " " << batteryModule.external_power_supply
-            << " " << batteryModule.charging_time << std::endl;
-    fileBattery.close();
+    BatteryModule battery_module;
 
-    SmartCar smart_car = {
-        "cquen-xxx",
-        chassis,
-        agx_kit,
-        stereo_camera,
-        multiLineLidar,
-        nineAxisGyroscope,
-        lcd,
-        batteryModule,
-    };
+    battery_module.set_parameter("24V/15Ah");
+    battery_module.set_external_power_supply("24v");
+    battery_module.set_charging_time("2H");
+
+    battery_module.save();
 }
 
 
 std::vector<SmartCar> load_smart_car_data() {
-    std::ifstream tyresFile;
-    tyresFile.open("tyres.txt");
-
-    Tyre tyres[4];
-
-    for (auto & i : tyres) {
-        tyresFile >> i.size >> i.model;
-    }
-    tyresFile.close();
-
-
-    std::ifstream chassisFile;
-    chassisFile.open("chassis.txt");
-
-    Chassis chassis;
-
-    chassis.tyre[0] = tyres[0];
-    chassis.tyre[1] = tyres[1];
-    chassis.tyre[2] = tyres[2];
-    chassis.tyre[3] = tyres[3];
-
-
-    chassisFile >> chassis.id >> chassis.model
-    >> chassis.wheel_base >> chassis.wheel_track
-    >> chassis.minimum_ground_clearance
-    >> chassis.minimum_turning_radius
-    >> chassis.driving_form >> chassis.maximum_stroke;
-    chassisFile.close();
-
-
-
-    std::ifstream agxFile;
-    agxFile.open("agx.txt");
-
-    AGXKit agx_kit;
-
-    agxFile >> agx_kit.model >> agx_kit.ai
-    >> agx_kit.cuda_cores >> agx_kit.tensor_core
-    >> agx_kit.video_memory >> agx_kit.storage;
-
-    agxFile.close();
-
-    std::ifstream stereoFile;
-    stereoFile.open("stereo.txt");
-
-    StereoVisionCamera stereo_camera;
-
-    stereoFile >> stereo_camera.model >> stereo_camera.camera
-    >> stereo_camera.rgb_frame_resolution >> stereo_camera.rgb_fps
-    >> stereo_camera.fov >> stereo_camera.deep_fps;
-
-    stereoFile.close();
-
-
-    std::ifstream multiLineLidarFile;
-    multiLineLidarFile.open("multiLineLidar.txt");
-
-    MultiLineLidar multiLineLidar;
-
-    multiLineLidarFile >> multiLineLidar.model >> multiLineLidar.channel
-    >> multiLineLidar.test_range >> multiLineLidar.power;
-    multiLineLidarFile.close();
-
-
-    std::ifstream nineAxisGyroscopeFile;
-    nineAxisGyroscopeFile.open("nineAxisGyroscope.txt");
-
-    NineAxisGyroscope nineAxisGyroscope;
-
-    nineAxisGyroscopeFile >> nineAxisGyroscope.model >> nineAxisGyroscope.manufacturers;
-    nineAxisGyroscopeFile.close();
-
-
-    std::ifstream lcdFile;
-    lcdFile.open("lcd.txt");
-
-    LCD lcd;
-
-    lcdFile >> lcd.size >> lcd.model;
-    lcdFile.close();
-
-
-    std::ifstream batteryFile;
-    batteryFile.open("battery.txt");
-
-    BatteryModule batteryModule;
-
-    batteryFile >> batteryModule.parameter >> batteryModule.external_power_supply
-    >> batteryModule.charging_time;
-    batteryFile.close();
-
     std::vector<SmartCar> smartCars;
 
     std::ifstream idsFile;
@@ -267,13 +194,12 @@ std::vector<SmartCar> load_smart_car_data() {
 
     int cnt = 10;
     while (cnt--) {
+        SmartCar smartCar;
+        smartCar.load();
+
         string id;
         idsFile >> id;
-        SmartCar smartCar = {
-            id, chassis, agx_kit,
-            stereo_camera, multiLineLidar,
-            nineAxisGyroscope, lcd, batteryModule
-        };
+        smartCar.set_id(id);
 
         smartCars.push_back(smartCar);
     }

@@ -9,10 +9,25 @@
 
 using std::string;
 
-struct MultiLineLidar {
+class MultiLineLidar {
     string model;
     int channel;
     string test_range;
     string power;
+
+public:
+    void set_model(const string &model);
+
+    void set_channel(int channel);
+
+    void set_test_range(const string &test_range);
+
+    void set_power(const string &power);
+
+    void print() const;
+
+    void save() const;
+
+    void load();
 };
 #endif //MULTILINELIDAR_H

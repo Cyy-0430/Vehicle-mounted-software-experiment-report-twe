@@ -10,8 +10,19 @@
 using std::string;
 
 
-struct NineAxisGyroscope {
+class NineAxisGyroscope {
     string model;
     string manufacturers;
+
+public:
+    void set_model(const string &model);
+
+    void set_manufacturers(const string &manufacturers);
+
+    void print() const;
+
+    void save() const;
+
+    void load();
 };
 #endif //NINE_AXIS_GYROSCOPE_H

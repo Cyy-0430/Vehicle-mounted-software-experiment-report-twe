@@ -9,8 +9,19 @@
 
 using std::string;
 
-struct LCD {
+class LCD {
     double size;
     string model;
+
+public:
+    void set_size(double size);
+
+    void set_model(const string &model);
+
+    void print() const;
+
+    void save() const;
+
+    void load();
 };
 #endif //LCD_H
